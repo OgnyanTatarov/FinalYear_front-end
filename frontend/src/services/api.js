@@ -7,6 +7,15 @@ const API = axios.create({
       },
 });
 
+export const loginUser = async (email, password) => {
+  try {
+    const response = await API.post('/user/login', {"data": {"email": `${email}`, "password": `${password}`}});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 export const fetchCourses = async (userId, page) => {
     try {
       const response = await API.post('/courses/view', { "user_id" : `${userId}`, "page":`${page}`});

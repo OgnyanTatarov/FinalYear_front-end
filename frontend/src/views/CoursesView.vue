@@ -22,7 +22,11 @@ import Pagination from '@/components/Pagination.vue';
 import { fetchCourses } from '@/services/api.js';
 import { onMounted, ref } from 'vue';
 import { useToast } from 'vue-toastification';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import router from '../router';
+
+const store = useStore();
 
 const toast = useToast();
   
@@ -59,7 +63,8 @@ const getCourses = async (userId, page) => {
   };
   
 onMounted(async () => {
-  await getCourses(1,currentPage.value);
+  const userInfo = computed(() => store.getters.getUserInfo);
+  await getCourses(userInfo.value.userId,currentPage.value);
 });
 
 </script>

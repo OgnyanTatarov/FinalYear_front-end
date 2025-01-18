@@ -5,6 +5,13 @@ const store = createStore({
     // Define your application's state
     courses: [],
     deadlines: [],
+    userInfo: {
+      userId: null,
+      name: "",
+      username: "",
+      email: "",
+      role: "",
+    },
   },
   mutations: {
     // Define mutation methods to update state
@@ -14,24 +21,37 @@ const store = createStore({
     setDeadlines(state, deadlines) {
       state.deadlines = deadlines;
     },
+    setUserInfo(state, userInfo){
+      // state.userInfo.userId = userInfo.userId;
+      // state.userInfo.name = userInfo.name;
+      // state.userInfo.username = userInfo.username;
+      // state.userInfo.email = userInfo.email;
+      // state.userInfo.role = userInfo.role;
+      state.userInfo = userInfo;
+    },
+    clearUserId(state){
+      state.userInfo = {
+        userId: null,
+        username: '',
+        email: '',
+        role: '',
+      };
+    },
   },
   actions: {
     // Define actions to perform asynchronous tasks
     fetchCourses({ commit }) {
-      // Example API call to fetch courses
-      const sampleCourses = [
-        { id: 1, name: 'Course 1', admin: 'Admin 1' },
-        { id: 2, name: 'Course 2', admin: 'Admin 2' },
-      ];
-      commit('setCourses', sampleCourses);
+    
     },
     fetchDeadlines({ commit }) {
-      // Example API call to fetch deadlines
-      const sampleDeadlines = [
-        { id: 1, title: 'Assignment 1', due: '2025-01-15' },
-        { id: 2, title: 'Assignment 2', due: '2025-01-20' },
-      ];
-      commit('setDeadlines', sampleDeadlines);
+
+    },
+
+    login({ commit }, userInfo) {
+      commit('setUserInfo', userInfo); // Save user info on login
+    },
+    logout({ commit }) {
+      commit('clearUserInfo'); // Clear user info on logout
     },
   },
   getters: {
@@ -41,6 +61,21 @@ const store = createStore({
     },
     getDeadlines(state) {
       return state.deadlines;
+    },
+    getUserInfo(state) {
+      return state.userInfo; // Return the full user info object
+    },
+    getUserId(state) {
+      return state.userInfo.userId; // Return the user ID
+    },
+    getUserName(state) {
+      return state.userInfo.username; // Return the user's name
+    },
+    getUserEmail(state) {
+      return state.userInfo.email; // Return the user's email
+    },
+    getUserRole(state) {
+      return state.userInfo.role; // Return the user's role
     },
   },
 });
