@@ -16,6 +16,25 @@ export const loginUser = async (email, password) => {
     throw error;
   }
 }
+
+export const registerUser = async (data) => {
+  try {
+    const response = await API.post('user/register', {
+      data: {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        up_number: data.up_number,
+        captchaToken: data.captchaToken  // Include the token
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export const fetchCourses = async (userId, page) => {
     try {
       const response = await API.post('/courses/view', { "user_id" : `${userId}`, "page":`${page}`});

@@ -7,7 +7,7 @@
     <Pagination
     :totalPages="total"
     :current-page="currentPage"
-    @page-changed="fetchDeadlines"
+    @page-changed="getDeadlines"
   />
   </div>
 </template>
@@ -15,42 +15,45 @@
 <script setup>
 import Pagination from '@/components/Pagination.vue';
 import DeadlineList from '../components/DeadlineList.vue';
-import {fetchDeadlines} from '@/services/api.js';
+import { fetchDeadlines } from '@/services/api.js';
 import { useToast } from 'vue-toastification';
-import { onMounted, ref } from 'vue';
-import router from '../router';
-const toast = useToast();
+import { onMounted, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
-const deadlines = ref([]);
+const toast = useToast();
+const route = useRoute();
+const store = useStore();
+
+const deadlines = computed(() => store.getters.getDeadlines);
 const total = ref(0);
 const currentPage = ref(1);
 
+const courseName = route.params.courseName;
+const userId = route.query.userId;
 
-const { params, query } = router.currentRoute.value; 
-const courseName = params.courseName; 
-const userId = ref(query.userId);
+// Get current course from store
+const currentCourse = computed(() => 
+  store.getters.getCourses.find(course => course.course_name === courseName)
+);
 
-const getDeadlines = async (courseName, userId, page) => {
-try {
-  const data = await fetchDeadlines(courseName ,userId, page);
-  // Update reactive state
-  deadlines.value = data;
-  console.log(courseName)
-  if( data.length > 20){
-    total.value = (data.length % 20) + 1;
-  } else {
-    total.value = 1;
-  };
-  currentPage.value = page;
-} catch (error) {
-  toast.error("There was a problem while getting the deadlines for your courses!");
-  console.error('error', error);
-}
+const getDeadlines = async (page = 1) => {
+  try {
+    const data = await fetchDeadlines(courseName, userId, page);
+    // Update store instead of local state
+    store.commit('setDeadlines', data);
+    total.value = data.length > 20 ? Math.ceil(data.length / 20) : 1;
+    currentPage.value = page;
+  } catch (error) {
+    toast.error("There was a problem while getting the deadlines for your courses!");
+    console.error('error', error);
+  }
 };
 
-onMounted(() =>{
-  getDeadlines(courseName, userId.value,1);
+onMounted(() => {
+  getDeadlines(1);
 });
+
 // export default {
 //   name: "DeadlinesView",
 //   props: {

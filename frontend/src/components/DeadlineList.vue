@@ -24,7 +24,6 @@ export default {
   props: ['deadlines', 'course_name'],
   methods: {
     getStatusClass(status, progress) {
-
       return status == 1 || progress === 100 ? 'Completed' : 'Pending';
     },
   },

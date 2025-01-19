@@ -4,7 +4,15 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.includes('vue-recaptcha')
+        }
+      }
+    }),
+  ],
   server: {
     port: 3000
   },

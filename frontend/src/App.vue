@@ -4,19 +4,32 @@
         <h1>My Final Year Project</h1>
       </header>
       <main>
+        <Navbar v-if="shouldShowNavbar"/>
         <!-- Dynamically load pages based on routes -->
         <router-view />
       </main>
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'App',
-  };
-  </script>
+<script setup>
+  import { useRoute } from 'vue-router';
+  import { computed } from 'vue';
+  import Navbar from '../src/components/NavBar.vue';
   
-  <style>
+  defineOptions({
+    name: 'App',
+  });
+
+  const route = useRoute();
+
+  // Compute whether navbar should be shown based on current route
+  const shouldShowNavbar = computed(() => {
+    const hiddenPaths = ['/', '/register'];
+    return !hiddenPaths.includes(route.path);
+  });
+</script>
+  
+<style>
   /* Global styles */
   body {
     font-family: Arial, sans-serif;
@@ -32,6 +45,6 @@
   main {
     padding: 1rem;
   }
-  </style>
+</style>
   
   

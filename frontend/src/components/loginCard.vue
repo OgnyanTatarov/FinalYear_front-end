@@ -4,7 +4,7 @@
     <h1>Login</h1>
     <form action="#" method="POST" class="login-form" @submit.prevent="onSubmit">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">Email</label>
         <input type="email" id="email" name="email" v-model="email" placeholder="Enter your username" required>
       </div>
       <div class="form-group">
@@ -13,6 +13,9 @@
       </div>
       <button type="submit" class="login-btn">Login</button>
     </form>
+    <p class="register-link">
+      Don't have an account? <router-link to="/register">Register here</router-link>
+    </p>
   </div>
 </template>
 
@@ -35,7 +38,8 @@ const onSubmit = () => {
         email: email.value,
         password: password.value
     };
-
+    email.value = '';
+    password.value = '';
     emit('loginSumbited', loginData);
 };
 
@@ -126,6 +130,23 @@ body {
   .login-container {
     padding: 15px;
   }
+}
+
+.register-link {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.register-link a {
+  color: #3f51b5;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.register-link a:hover {
+  color: #2c3e9a;
 }
 
 </style>

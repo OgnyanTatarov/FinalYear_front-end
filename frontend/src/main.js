@@ -1,15 +1,19 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import router from './router/index.js'; // If you have a router setup
-import store from './store'; // If you have a state management setup (e.g., Pinia or Vuex)
+import router from './router';
+import store from './store';
 import Toast from 'vue-toastification';
-import 'vue-toastification/dist/index.css'
+import 'vue-toastification/dist/index.css';
 import './assets/main.css'; // Optional: Replace with your global CSS file
 
 const app = createApp(App);
 
-app.use(Toast);
 app.use(router);
 app.use(store);
+app.use(Toast, {
+  transition: "Vue-Toastification__bounce",
+  maxToasts: 20,
+  newestOnTop: true
+});
 
 app.mount('#app');

@@ -1,17 +1,18 @@
 <template>
   <div>
+    
     <h1>Your Courses</h1>
     <CourseCard
       v-for="course in courses"
       :key="course.course_id"
       :course="course"
-      @view-deadlines="fetchDeadlines(course.course_name,userId.value)"
+      @view-deadlines="fetchDeadlines(course.course_name,course.user_id)"
     />
 
     <Pagination
       :totalPages="total"
       :current-page="currentPage"
-      @page-changed="fetchCourses"
+      @page-changed="getCourses"
     />
   </div>
 </template>
@@ -20,51 +21,53 @@
 import CourseCard from '@/components/CourseCard.vue';
 import Pagination from '@/components/Pagination.vue';
 import { fetchCourses } from '@/services/api.js';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useToast } from 'vue-toastification';
-import { computed } from 'vue';
 import { useStore } from 'vuex';
-import router from '../router';
+import { useRouter } from 'vue-router';
 
 const store = useStore();
-
+const router = useRouter();
 const toast = useToast();
-  
-const courses = ref([]);
+
+// Use computed property to get courses from store
+const courses = computed(() => store.getters.getCourses);
 const total = ref(0);
 const currentPage = ref(1);
-const userId = ref(-1);
+const userInfo = computed(() => store.getters.getUserInfo);
 
-const getCourses = async (userId, page) => {
+const getCourses = async (page = 1) => {
   try {
-    const data = await fetchCourses(userId, page);
-    userId = userId;
-    // Update reactive state
-    courses.value = data;
-    if( data.length > 20){
-      total.value = (data.length % 20) + 1;
+    // Only fetch if we don't have courses or if explicitly requesting a page
+    if (!courses.value.length || page !== currentPage.value) {
+      const data = await fetchCourses(userInfo.value.userId, page);
+      store.commit('setCourses', data);
+      total.value = data.length > 20 ? Math.ceil(data.length / 20) : 1;
+      currentPage.value = page;
     } else {
-      total.value = data.length;
-    };
-    currentPage.value = page;
+      // Use existing data to set total and current page
+      total.value = courses.value.length > 20 ? Math.ceil(courses.value.length / 20) : 1;
+    }
   } catch (error) {
     toast.error("There was a problem while getting the courses!");
     console.error('error:', error);
-    return;
   }
 };
-    
-  const  fetchDeadlines = async(courseName, userId) => {
-      router.push({
-      name: 'Deadlines', 
-      params: { courseName: courseName }, 
-      query:  {userId: 1} , 
-    });
-  };
-  
-onMounted(async () => {
-  const userInfo = computed(() => store.getters.getUserInfo);
-  await getCourses(userInfo.value.userId,currentPage.value);
-});
 
+const fetchDeadlines = async(courseName, userId) => {
+  router.push({
+    name: 'Deadlines', 
+    params: { courseName }, 
+    query: { userId: userId}, 
+  });
+};
+
+onMounted(async () => {
+  // Check if user is logged in
+  if (!userInfo.value.userId) {
+    router.push('/');
+    return;
+  }
+  await getCourses(currentPage.value);
+});
 </script>

@@ -1,15 +1,17 @@
 <template>
     <div class="pagination">
       <button
+        class="pagination-btn"
         :disabled="currentPage === 1"
         @click="changePage(currentPage - 1)"
       >
         Previous
       </button>
   
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
   
       <button
+        class="pagination-btn"
         :disabled="currentPage === totalPages"
         @click="changePage(currentPage + 1)"
       >
@@ -23,20 +25,20 @@
 
   const name = "Pagination";
   const props = defineProps({
-    currentPage:{
-      type:Number,
+    currentPage: {
+      type: Number,
       required: true
     },
     totalPages: {
-        type: Number,
-        required: true,
-      }
+      type: Number,
+      required: true
+    }
   });
 
-  const emit = defineEmits(["page-change"]);
+  const emit = defineEmits(['page-changed']);
 
-  const changePage = () => {
-    this.emit("page-changed", newPage);
+  const changePage = (newPage) => {
+    emit('page-changed', newPage);
   };
     //   currentPage: {
     //     type: Number,
