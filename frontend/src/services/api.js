@@ -7,15 +7,21 @@ const API = axios.create({
       },
 });
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (data) => {
   try {
-    const response = await API.post('/user/login', {"data": {"email": `${email}`, "password": `${password}`}});
+    const response = await API.post('/user/login', {
+      data: {
+        email: data.email,
+        password: data.password,
+        captchaToken: data.captchaToken
+      }
+    });
     return response.data;
   } catch (error) {
-    console.error(error);
+    console.error('Login error:', error);
     throw error;
   }
-}
+};
 
 export const registerUser = async (data) => {
   try {

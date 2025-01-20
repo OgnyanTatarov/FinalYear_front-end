@@ -2,29 +2,30 @@
     <div>
         <LoginCard
         @loginSumbited="handleLogin"
+        :isLoading="isLoading"
+        :errors="errors"
         />
     </div>
 </template>
 
 <script setup>
 import LoginCard from '../components/loginCard.vue';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { loginUser } from '../services/api';
 import { useToast } from 'vue-toastification';
 
 const toast = useToast();
-
-const email = ref('');
-const password = ref('');
-
-const store =  useStore();
+const store = useStore();
 const router = useRouter();
+const isLoading = ref(false);
+const errors = reactive({});
 
-const handleLogin = async (loginData) =>{
+const handleLogin = async (loginData) => {
     try {
-        const response = await loginUser(loginData.email, loginData.password);
+        isLoading.value = true;
+        const response = await loginUser(loginData);
         const userInfo = {
             userId: response.user_id,
             username: response.username,
@@ -34,12 +35,12 @@ const handleLogin = async (loginData) =>{
         store.dispatch('login', userInfo);
         router.push('/courses')
     } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error(Array.isArray(error.response.data) ? error.response.data.join(', ') : error.response.data);
-    };
+    } finally {
+        isLoading.value = false;
+    }
 };
-
-
 </script>
 
 <style>

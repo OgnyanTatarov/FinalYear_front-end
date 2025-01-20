@@ -1,17 +1,32 @@
-
 <template>
 <div class="login-container">
     <h1>Login</h1>
-    <form action="#" method="POST" class="login-form" @submit.prevent="onSubmit">
+    <form action="#" method="POST" class="login-form" @submit.prevent="onSubmit" :class="{ 'loading': isLoading }">
       <div class="form-group">
-        <label for="username">Email</label>
-        <input type="email" id="email" name="email" v-model="email" placeholder="Enter your username" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" v-model="formData.email" placeholder="Enter your email" :class="{ 'error': errors?.email }" required>
+        <span class="error-message" v-if="errors?.email">{{ errors.email }}</span>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" v-model="password" placeholder="Enter your password" required>
+        <input type="password" id="password" name="password" v-model="formData.password" placeholder="Enter your password" :class="{ 'error': errors?.password }" required>
+        <span class="error-message" v-if="errors?.password">{{ errors.password }}</span>
       </div>
-      <button type="submit" class="login-btn">Login</button>
+      <div class="captcha-wrapper">
+        <div id="recaptcha-container">
+          <div
+            ref="recaptchaElement"
+            class="g-recaptcha"
+            :data-sitekey="recaptchaSiteKey"
+          ></div>
+        </div>
+        <span class="error-message" v-if="errors?.captcha">
+          {{ errors?.captcha }}
+        </span>
+      </div>
+      <button type="submit" class="login-btn" :disabled="isLoading">
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
     </form>
     <p class="register-link">
       Don't have an account? <router-link to="/register">Register here</router-link>
@@ -20,29 +35,84 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import {useToast} from 'vue-toastification';
 
 const email = ref('');
 const password = ref('');
 
 const emit = defineEmits(['loginSumbited']);
+const props = defineProps({
+    isLoading: Boolean,
+    errors: {
+        type: Object,
+        default: () => ({})
+    }
+});
 
 const toast = useToast();
 
-const onSubmit = () => {
-    if(!email.value || !password.value){
-        toast.error("Both fields are required in order to login!");
-    };
-    const loginData = {
-        email: email.value,
-        password: password.value
-    };
-    email.value = '';
-    password.value = '';
-    emit('loginSumbited', loginData);
+const recaptchaElement = ref(null);
+const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+const captchaToken = ref('');
+
+const formData = reactive({
+  email: '',
+  password: ''
+});
+
+const initRecaptcha = () => {
+  if (window.grecaptcha && recaptchaElement.value) {
+    window.grecaptcha.render(recaptchaElement.value, {
+      sitekey: recaptchaSiteKey,
+      callback: (token) => {
+        captchaToken.value = token;
+      },
+      'expired-callback': () => {
+        captchaToken.value = '';
+      }
+    });
+  }
 };
 
+onMounted(() => {
+  const script = document.createElement('script');
+  script.src = `https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit`;
+  script.async = true;
+  script.defer = true;
+  
+  window.onRecaptchaLoad = () => {
+    initRecaptcha();
+  };
+
+  document.head.appendChild(script);
+
+  return () => {
+    document.head.removeChild(script);
+    delete window.onRecaptchaLoad;
+  };
+});
+
+const onSubmit = () => {
+    // Local validation
+    if(!formData.email || !formData.password){
+        toast.error("Both fields are required in order to login!");
+        return;
+    }
+    
+    if(!captchaToken.value) {
+        toast.error("Please complete the CAPTCHA verification");
+        return;
+    }
+
+    const loginData = {
+        email: formData.email,
+        password: formData.password,
+        captchaToken: captchaToken.value
+    };
+
+    emit('loginSumbited', loginData);
+};
 
 </script>
 
@@ -149,4 +219,32 @@ body {
   color: #2c3e9a;
 }
 
+/* Add reCAPTCHA specific styles */
+.captcha-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+#recaptcha-container {
+  min-height: 78px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Add this to ensure reCAPTCHA is visible */
+.g-recaptcha {
+  display: inline-block;
+}
+
+/* Add this if reCAPTCHA is too large for mobile */
+@media (max-width: 400px) {
+  #recaptcha-container {
+    transform: scale(0.9);
+    transform-origin: center;
+  }
+}
 </style>
