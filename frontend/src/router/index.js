@@ -26,6 +26,17 @@ const routes = [
       userId: route.query.userId,
     }),
   },
+  {
+    path: '/courses/priority',
+    name: 'Priority',
+    component: () => import('../views/PriorityView.vue'),
+    props: (route) => ({
+      courseData: route.query.courseData ? 
+        JSON.parse(decodeURIComponent(route.query.courseData)) : 
+        null
+    }),
+    // meta: { requiresAuth: true }
+  },
 ];
 
 const router = createRouter({

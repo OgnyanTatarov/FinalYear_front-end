@@ -1,15 +1,23 @@
 <script setup>
-const props = defineProps({
-  course: {
-    type: Object,
-    required: true
-  }
-});
+import { defineProps, defineEmits } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const props = defineProps(['course']);
 const emit = defineEmits(['view-deadlines']);
 
 const viewDeadlines = () => {
-  emit('view-deadlines', props.course.course_name);
+  emit('view-deadlines');
+};
+const setPriority = () => {
+  // Convert the Proxy object to a plain object and stringify it
+  const courseData = JSON.parse(JSON.stringify(props.course));
+  router.push({
+    name: 'Priority',
+    query: {
+      courseData: encodeURIComponent(JSON.stringify(courseData))
+    }
+  });
 };
 
 const getPriorityClass = () => {

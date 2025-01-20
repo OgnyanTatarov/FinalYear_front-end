@@ -38,14 +38,14 @@ const userInfo = computed(() => store.getters.getUserInfo);
 
 const getCourses = async (page = 1) => {
   try {
-    // Only fetch if we don't have courses or if explicitly requesting a page
     if (!courses.value.length || page !== currentPage.value) {
-      const data = await fetchCourses(userInfo.value.userId, page);
-      store.commit('setCourses', data);
-      total.value = data.length > 20 ? Math.ceil(data.length / 20) : 1;
+      await store.dispatch('refreshCourses', {
+        userId: userInfo.value.userId,
+        page
+      });
+      total.value = courses.value.length > 20 ? Math.ceil(courses.value.length / 20) : 1;
       currentPage.value = page;
     } else {
-      // Use existing data to set total and current page
       total.value = courses.value.length > 20 ? Math.ceil(courses.value.length / 20) : 1;
     }
   } catch (error) {

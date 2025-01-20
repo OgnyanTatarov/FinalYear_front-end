@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import { fetchCourses } from '../services/api';
 
 // Helper functions for localStorage
 const saveState = (key, state) => {
@@ -83,6 +84,16 @@ const store = createStore({
       commit('setCourses', []);
       commit('setDeadlines', []);
     },
+    async refreshCourses({ commit }, { userId, page }) {
+      try {
+        const coursesData = await fetchCourses(userId, page);
+        commit('setCourses', coursesData);
+        return coursesData;
+      } catch (error) {
+        console.error('Error refreshing courses:', error);
+        throw error;
+      }
+    }
   },
   getters: {
     // Define getters to access state

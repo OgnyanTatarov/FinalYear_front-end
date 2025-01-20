@@ -61,5 +61,20 @@ export const fetchDeadlines = async(courseName, userId, page) => {
     };
 };
     
-export const updatePriority = (courseId, userId, priority) =>
-    API.put('/courses/priority', { courseId, userId, priority });
+export const updatePriority = async (courseId, userId, priority, page) => {
+  try {
+    const response = await API.post('/courses/priority', {
+      data:{
+      course_id: courseId,
+      user_id: userId,
+      priority: priority,
+      page: page
+      }
+
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating priority:', error);
+    throw error;
+  }
+};
