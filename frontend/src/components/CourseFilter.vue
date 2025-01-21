@@ -52,9 +52,9 @@
             v-model="filters.priority"
           >
             <option value="">All Priorities</option>
-            <option value="1">Low</option>
-            <option value="2">Medium</option>
-            <option value="3">High</option>
+            <option :value="1">Low</option>
+            <option :value="2">Medium</option>
+            <option :value="3">High</option>
           </select>
         </div>
 
@@ -131,6 +131,15 @@ const applyFilters = () => {
     filterQuery.filters.filter.push({
       filter_name: filters.sortField,
       order: filters.sortOrder.toUpperCase()
+    });
+  }
+
+  // Add priority filter
+  if (filters.priority !== '') {
+    filterQuery.filters.filter.push({
+      filter_name: 'priority',
+      order: filters.priority,
+      operator: '='
     });
   }
 

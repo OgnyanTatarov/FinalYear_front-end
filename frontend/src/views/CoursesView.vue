@@ -54,15 +54,15 @@ const handleFilterChange = async (filterData) => {
 
     // Update store with filtered courses
     store.commit('setCourses', response.items);
-    console.log(response)
     if(!response.items){
       toast.error("No courses found with those filters!");
       await getCourses(currentPage.value);
       return;
     }
+    
     // Update total items for pagination
-    if (response.total_items) {
-      totalItems.value = response.total_items;
+    if (response.items[0]?.total_items) {
+      totalItems.value = response.items[0].total_items;
     }
   } catch (error) {
     toast.error("Error applying filters!");
@@ -104,8 +104,9 @@ const getCourses = async (page = 1) => {
     // Update store with new courses
     store.commit('setCourses', response.items);
     
-    if (response.total_items) {
-      totalItems.value = response.total_items;
+    // Update total items from the first course object
+    if (response.items[0]?.total_items) {
+      totalItems.value = response.items[0].total_items;
     }
     return response;
   } catch (error) {

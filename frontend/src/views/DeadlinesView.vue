@@ -5,8 +5,9 @@
     :course_name="courseName"
     />
     <Pagination
-    :totalPages="total"
-    :current-page="currentPage"
+    :currentPage="currentPage"
+    :totalItems="totalItems"
+    :itemsPerPage="20"
     @page-changed="getDeadlines"
   />
   </div>
@@ -26,7 +27,7 @@ const route = useRoute();
 const store = useStore();
 
 const deadlines = computed(() => store.getters.getDeadlines);
-const total = ref(0);
+const totalItems = ref(0);
 const currentPage = ref(1);
 
 const courseName = route.params.courseName;
@@ -39,10 +40,14 @@ const currentCourse = computed(() =>
 
 const getDeadlines = async (page = 1) => {
   try {
-    const data = await fetchDeadlines(courseName, userId, page);
+    const response = await fetchDeadlines(courseName, userId, page);
     // Update store instead of local state
-    store.commit('setDeadlines', data);
-    total.value = data.length > 20 ? Math.ceil(data.length / 20) : 1;
+    store.commit('setDeadlines', response.items);
+    
+    // Update total items for pagination
+    if (response.total_items) {
+      totalItems.value = response.total_items;
+    }
     currentPage.value = page;
   } catch (error) {
     toast.error("There was a problem while getting the deadlines for your courses!");
