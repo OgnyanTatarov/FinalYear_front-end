@@ -109,3 +109,17 @@ export const updatePriority = async (courseId, userId, priority, page) => {
     throw error;
   }
 };
+
+export const updateDeadlinePriority = async (deadlineId, userId, priority) => {
+  try {
+    const response = await API.post('courses/deadlines/priority', {
+      deadline_id: deadlineId,
+      user_id: userId,
+      priority_level: priority
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating deadline priority:', error);
+    throw error;
+  }
+};

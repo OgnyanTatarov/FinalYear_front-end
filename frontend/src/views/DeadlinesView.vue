@@ -3,6 +3,7 @@
     <DeadlineList 
     :deadlines="deadlines"
     :course_name="courseName"
+    @update-priority="handlePriorityUpdate"
     />
     <Pagination
     :currentPage="currentPage"
@@ -16,7 +17,7 @@
 <script setup>
 import Pagination from '@/components/Pagination.vue';
 import DeadlineList from '../components/DeadlineList.vue';
-import { fetchDeadlines } from '@/services/api.js';
+import { fetchDeadlines, updateDeadlinePriority } from '@/services/api.js';
 import { useToast } from 'vue-toastification';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
@@ -52,6 +53,17 @@ const getDeadlines = async (page = 1) => {
   } catch (error) {
     toast.error("There was a problem while getting the deadlines for your courses!");
     console.error('error', error);
+  }
+};
+
+const handlePriorityUpdate = async ({ deadlineId, priority }) => {
+  try {
+    await updateDeadlinePriority(deadlineId, userId, priority);
+    // Refresh deadlines after update
+    await getDeadlines(currentPage.value);
+  } catch (error) {
+    toast.error("Failed to update deadline priority");
+    console.error('Error:', error);
   }
 };
 
