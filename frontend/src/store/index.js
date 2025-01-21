@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { fetchCourses } from '../services/api';
+import { fetchCourses, filterCourses } from '../services/api';
 
 // Helper functions for localStorage
 const saveState = (key, state) => {
@@ -36,6 +36,11 @@ const store = createStore({
       email: "",
       role: "",
     },
+    filterState: loadState('filterState') || {
+      isFiltered: false,
+      currentFilters: null,
+      currentPage: 1
+    }
   },
   mutations: {
     // Define mutation methods to update state
@@ -64,6 +69,18 @@ const store = createStore({
       localStorage.removeItem('courses');
       localStorage.removeItem('deadlines');
     },
+    setFilterState(state, filterState) {
+      state.filterState = filterState;
+      saveState('filterState', filterState);
+    },
+    clearFilterState(state) {
+      state.filterState = {
+        isFiltered: false,
+        currentFilters: null,
+        currentPage: 1
+      };
+      saveState('filterState', state.filterState);
+    },
   },
   actions: {
     // Define actions to perform asynchronous tasks
@@ -87,10 +104,38 @@ const store = createStore({
     async refreshCourses({ commit }, { userId, page }) {
       try {
         const coursesData = await fetchCourses(userId, page);
-        commit('setCourses', coursesData);
+        commit('setCourses', coursesData.items);
         return coursesData;
       } catch (error) {
         console.error('Error refreshing courses:', error);
+        throw error;
+      }
+    },
+    async filterCoursesList({ commit }, { userId, page, filters }) {
+      try {
+        const filteredData = await filterCourses(userId, page, filters);
+        commit('setCourses', filteredData.items);
+        commit('setFilterState', {
+          isFiltered: true,
+          currentFilters: filters,
+          currentPage: page
+        });
+        return filteredData;
+      } catch (error) {
+        console.error('Error filtering courses:', error);
+        throw error;
+      }
+    },
+    async clearFilters({ commit, dispatch }, { userId, page }) {
+      try {
+        // Clear the filter state first
+        commit('clearFilterState');
+        // Fetch original courses
+        const coursesData = await fetchCourses(userId, page);
+        commit('setCourses', coursesData.items);
+        return coursesData;
+      } catch (error) {
+        console.error('Error clearing filters:', error);
         throw error;
       }
     }
@@ -117,6 +162,9 @@ const store = createStore({
     },
     getUserRole(state) {
       return state.userInfo.role; // Return the user's role
+    },
+    getFilterState(state) {
+      return state.filterState;
     },
   },
 });

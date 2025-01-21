@@ -5,7 +5,6 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const props = defineProps(['course']);
 const emit = defineEmits(['view-deadlines']);
-
 const viewDeadlines = () => {
   emit('view-deadlines');
 };
@@ -35,28 +34,26 @@ const getPriorityClass = () => {
 </script>
 
 <template>
-<div :class="['course-card', getPriorityClass(course.priority)]">
-  <div class="course-header">
-    <h3 class="course-name">
-      {{ course.course_name }}
-      <span class="course-code">({{ course.course_code }})</span>
-    </h3>
+  <div class="course-card" :class="[getPriorityClass(course.priority)]">
+    <div class="course-header">
+      <h3 class="course-name">
+        {{ course.course_name }}
+        <span class="course-code">({{ props.course.course_code }})</span>
+      </h3>
+    </div>
+    <div class="course-lecturer">
+      <img :src="course.lecturer_image" alt="Lecturer" class="lecturer-image" />
+      <p class="course-admin">Dr. {{ props.course.admin_name }}</p>
+    </div>
+    <div class="course-stats">
+      <p>Total Assessments: <strong>{{ props.course.total_assinments }}</strong></p>
+      <p>Completed: <strong>{{ props.course.completedAssesmants }}</strong></p>
+    </div>
+    <div class="course-actions">
+      <button class="view-deadlines-btn" @click="viewDeadlines">View Deadlines</button>
+      <button class="set-priority-btn" @click="setPriority">Set Priority</button>
+    </div>
   </div>
-  <div class="course-lecturer">
-    <img :src="course.lecturer_image" alt="Lecturer" class="lecturer-image" />
-    <p class="course-admin">Dr. {{ course.admin_name }}</p>
-  </div>
-  <div class="course-stats">
-    <p>Total Assessments: <strong>{{ course.total_assinments }}</strong></p>
-    <p>Completed: <strong>{{ course.completedAssesmants }}</strong></p>
-  </div>
-  <div class="course-actions">
-    <button class="view-deadlines-btn" @click="viewDeadlines">View Deadlines</button>
-    <button class="set-priority-btn" @click="setPriority">Set Priority</button>
-  </div>
-</div>
-
-
 </template>
 
 <style scoped>
@@ -191,6 +188,86 @@ const getPriorityClass = () => {
 .priority-high {
   background-color: #f8d7da; /* Light red */
   border-left: 5px solid #dc3545; /* Red border */
+}
+
+/* Add these new styles */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.filter-container {
+  position: relative;
+}
+
+.filter-btn {
+  background: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: #2c3e9a;
+}
+
+.filter-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  min-width: 200px;
+  z-index: 1000;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.filter-options h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-option label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.clear-filters {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 4px;
+  color: #666;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-filters:hover {
+  background: #e0e0e0;
 }
 
 </style>

@@ -2,7 +2,7 @@
   <div class="priority-card">
     <h2>Set Priority for {{ course.course_name }}</h2>
     <div class="course-info">
-      <p><strong>Course Code:</strong> {{ course.course_code }}</p>
+      <p><strong>Course name:</strong> {{ course.course_name }}</p>
       <p><strong>Current Priority:</strong> {{ getPriorityLabel(course.priority) }}</p>
     </div>
 

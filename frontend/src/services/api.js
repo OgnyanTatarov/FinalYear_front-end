@@ -43,13 +43,39 @@ export const registerUser = async (data) => {
 
 export const fetchCourses = async (userId, page) => {
     try {
-      const response = await API.post('/courses/view', { "user_id" : `${userId}`, "page":`${page}`});
-      return response.data.data;
+      const response = await API.post('/courses/view', { 
+        "user_id": `${userId}`, 
+        "page": `${page}`
+      });
+      return {
+        items: response.data.data,
+        total_pages: response.data.total_items / 20 || 1
+      };
     } catch (error) {
       console.error('Error fetching courses:', error);
       throw error;
     }
   };
+
+export const filterCourses = async (userId, page, filters) => {
+  try {
+    const response = await API.post('/courses/list', { 
+      data: {
+        "user_id": `${userId}`,
+        "page": `${page}`,
+        filters
+      } 
+    });
+    return {
+      items: response.data.items,
+      total_pages: response.data.total_items / 20 || 1
+    };
+  } catch (error) {
+    console.error('Error fetching courses:', error);
+    throw error;
+  }
+};
+
 export const fetchDeadlines = async(courseName, userId, page) => {
     try {
       const response = await API.post(`courses/${courseName}/deadlines`, {"user_id" : `${userId}`});
