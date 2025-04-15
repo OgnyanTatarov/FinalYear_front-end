@@ -1,23 +1,45 @@
 <template>
-  <div>
-    <div class="header-section">
-      <h1>Your Courses</h1>
-      <CourseFilter @filter-changed="handleFilterChange" />
+  <div class="courses-container">
+    <div class="page-header">
+      <div class="header-content">
+        <div class="title-section">
+          <h1 class="page-title">Your Courses</h1>
+          <p class="page-subtitle">Manage and track your academic progress</p>
+        </div>
+        <div class="header-actions">
+          <CourseFilter @filter-changed="handleFilterChange" />
+        </div>
+      </div>
+      
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-label">Total Courses</span>
+          <span class="stat-value">{{ totalItems }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Active Filters</span>
+          <span class="stat-value">{{ filterState.isFiltered ? 'Yes' : 'No' }}</span>
+        </div>
+      </div>
     </div>
     
-    <CourseCard
-      v-for="course in courses"
-      :key="course.course_id"
-      :course="course"
-      @view-deadlines="fetchDeadlines(course.course_name,course.user_id)"
-    />
+    <div class="courses-grid">
+      <CourseCard
+        v-for="course in courses"
+        :key="course.course_id"
+        :course="course"
+        @view-deadlines="fetchDeadlines({ courseId: course.course_id, userId: course.user_id })"
+      />
+    </div>
 
-    <Pagination
-      :currentPage="currentPage"
-      :totalItems="totalItems"
-      :itemsPerPage="20"
-      @page-changed="handlePageChange"
-    />
+    <div class="pagination-wrapper">
+      <Pagination
+        :currentPage="currentPage"
+        :totalItems="totalItems"
+        :itemsPerPage="20"
+        @page-changed="handlePageChange"
+      />
+    </div>
   </div>
 </template>
 
@@ -115,11 +137,11 @@ const getCourses = async (page = 1) => {
   }
 };
 
-const fetchDeadlines = async(courseName, userId) => {
+const fetchDeadlines = async({ courseId, userId }) => {
   router.push({
     name: 'Deadlines', 
-    params: { courseName }, 
-    query: { userId: userId}, 
+    params: { courseId }, 
+    query: { userId }, 
   });
 };
 
@@ -138,11 +160,118 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.header-section {
+.courses-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 72px);
+}
+
+.page-header {
+  margin-bottom: 3rem;
+}
+
+.header-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
-  padding: 0 1rem;
+}
+
+.title-section {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.header-actions {
+  margin-left: 2rem;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .courses-container {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    margin-left: 0;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .stats-bar {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }
 </style>

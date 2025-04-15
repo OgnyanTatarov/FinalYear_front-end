@@ -2,8 +2,9 @@
   <div>
     <DeadlineList 
     :deadlines="deadlines"
-    :course_name="courseName"
+    :course_name="currentCourse?.course_name"
     @update-priority="handlePriorityUpdate"
+    @update-progress="handleProgressUpdate"
     />
     <Pagination
     :currentPage="currentPage"
@@ -17,7 +18,7 @@
 <script setup>
 import Pagination from '@/components/Pagination.vue';
 import DeadlineList from '../components/DeadlineList.vue';
-import { fetchDeadlines, updateDeadlinePriority } from '@/services/api.js';
+import { fetchDeadlines, updateDeadlinePriority, updateDeadlineProgress } from '@/services/api.js';
 import { useToast } from 'vue-toastification';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
@@ -31,19 +32,19 @@ const deadlines = computed(() => store.getters.getDeadlines);
 const totalItems = ref(0);
 const currentPage = ref(1);
 
-const courseName = route.params.courseName;
+const courseId = route.params.courseId;
 const userId = route.query.userId;
 
 // Get current course from store
 const currentCourse = computed(() => 
-  store.getters.getCourses.find(course => course.course_name === courseName)
+  store.getters.getCourses.find(course => course.course_id === courseId)
 );
 
 const getDeadlines = async (page = 1) => {
   try {
-    const response = await fetchDeadlines(courseName, userId, page);
-    // Update store instead of local state
-    store.commit('setDeadlines', response.items);
+    const response = await fetchDeadlines(courseId, userId, page);
+    // Update store with new deadlines
+    store.commit('setDeadlines', response);
     
     // Update total items for pagination
     if (response.total_items) {
@@ -51,7 +52,7 @@ const getDeadlines = async (page = 1) => {
     }
     currentPage.value = page;
   } catch (error) {
-    toast.error("There was a problem while getting the deadlines for your courses!");
+    toast.error("There was a problem while getting the deadlines for your course!");
     console.error('error', error);
   }
 };
@@ -63,6 +64,18 @@ const handlePriorityUpdate = async ({ deadlineId, priority }) => {
     await getDeadlines(currentPage.value);
   } catch (error) {
     toast.error("Failed to update deadline priority");
+    console.error('Error:', error);
+  }
+};
+
+const handleProgressUpdate = async ({ deadlineId, progress }) => {
+  try {
+    await updateDeadlineProgress(deadlineId, userId, progress);
+    // Refresh deadlines to get updated data
+    await getDeadlines(currentPage.value);
+    toast.success("Progress updated successfully");
+  } catch (error) {
+    toast.error("Failed to update deadline progress");
     console.error('Error:', error);
   }
 };

@@ -5,7 +5,10 @@
       :disabled="currentPage === 1"
       @click="changePage(currentPage - 1)"
     >
-      Previous
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+      <span>Previous</span>
     </button>
 
     <div class="page-numbers">
@@ -25,7 +28,10 @@
       :disabled="currentPage === totalPages"
       @click="changePage(currentPage + 1)"
     >
-      Next
+      <span>Next</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
     </button>
   </div>
 </template>
@@ -82,67 +88,109 @@ const changePage = (newPage) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  margin: 20px 0;
-  font-family: 'Arial', sans-serif;
+  gap: 1rem;
+  margin: 2rem 0;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 .page-numbers {
   display: flex;
-  gap: 5px;
+  gap: 0.5rem;
 }
 
 .page-number {
-  background-color: #f5f5f5;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
   border: none;
-  border-radius: 4px;
-  padding: 8px 12px;
+  border-radius: 12px;
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.page-number.active {
-  background-color: #3f51b5;
-  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .page-number:hover:not(.active) {
-  background-color: #e0e0e0;
+  background: #f1f5f9;
+  color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.page-number.active {
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
 }
 
 .pagination-btn {
-  background-color: #3f51b5;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  color: #64748b;
   border: none;
-  border-radius: 5px;
-  padding: 8px 15px;
-  font-size: 1rem;
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background-color: #2c3e9a;
-  transform: scale(1.05);
+  background: #f1f5f9;
+  color: #1e293b;
+  transform: translateY(-1px);
+}
+
+.pagination-btn:hover:not(:disabled) svg {
+  transform: translateX(-2px);
+}
+
+.pagination-btn:last-child:hover:not(:disabled) svg {
+  transform: translateX(2px);
 }
 
 .pagination-btn:disabled {
-  background-color: #ccc;
-  color: #777;
+  background: #f1f5f9;
+  color: #94a3b8;
   cursor: not-allowed;
-}
-
-.pagination-btn:disabled:hover {
-  transform: none;
+  opacity: 0.7;
 }
 
 @media (max-width: 480px) {
-  .page-numbers {
-    display: none; /* Hide page numbers on mobile */
-  }
-  
   .pagination {
-    gap: 10px;
+    gap: 0.75rem;
+  }
+
+  .page-numbers {
+    display: none;
+  }
+
+  .pagination-btn {
+    padding: 0.75rem 1rem;
+  }
+
+  .pagination-btn span {
+    display: none;
+  }
+
+  .pagination-btn svg {
+    margin: 0;
   }
 }
 </style>

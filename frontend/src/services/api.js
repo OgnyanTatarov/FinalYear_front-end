@@ -76,16 +76,14 @@ export const filterCourses = async (userId, page, filters) => {
   }
 };
 
-export const fetchDeadlines = async(courseName, userId, page) => {
+export const fetchDeadlines = async(courseId, userId, page) => {
   try {
-    const response = await API.post(`courses/${courseName}/deadlines`, {
+    const response = await API.post(`courses/${courseId}/deadlines`, {
       "user_id": `${userId}`,
       "page": `${page}`
     });
-    return {
-      items: response.data,
-      total_items: response.data[0]?.total_items || 0
-    };
+    await API.post(`courses/deadlines/initialize-progress`);
+    return response.data;
   } catch (error) {
     console.error('Error fetching deadlines:', error);
     throw error;
@@ -112,7 +110,7 @@ export const updatePriority = async (courseId, userId, priority, page) => {
 
 export const updateDeadlinePriority = async (deadlineId, userId, priority) => {
   try {
-    const response = await API.post('courses/deadlines/priority', {
+    const response = await API.post('/courses/deadlines/priority', {
       deadline_id: deadlineId,
       user_id: userId,
       priority_level: priority
@@ -120,6 +118,20 @@ export const updateDeadlinePriority = async (deadlineId, userId, priority) => {
     return response.data;
   } catch (error) {
     console.error('Error updating deadline priority:', error);
+    throw error;
+  }
+};
+
+export const updateDeadlineProgress = async (deadlineId, userId, progress) => {
+  try {
+    const response = await API.post('courses/deadlines/progress', {
+      deadline_id: deadlineId,
+      user_id: userId,
+      progress: progress
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating deadline progress:', error);
     throw error;
   }
 };

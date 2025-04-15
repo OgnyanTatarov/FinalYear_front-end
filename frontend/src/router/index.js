@@ -18,11 +18,11 @@ const routes = [
     component: () => import('@/views/CoursesView.vue') 
   },
   {
-    path: '/courses/:courseName/deadlines', 
+    path: '/courses/:courseId/deadlines', 
     name: 'Deadlines', 
     component: () => import('@/views/DeadlinesView.vue'),
     props: (route) => ({
-      courseName: route.params.courseName,
+      courseId: route.params.courseId,
       userId: route.query.userId,
     }),
   },

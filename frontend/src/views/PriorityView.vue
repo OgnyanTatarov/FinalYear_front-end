@@ -8,11 +8,16 @@
         @save-priority="handlePrioritySave"
       />
       <div v-else class="error-message">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
         No course information available
       </div>
 
-      <!-- Add Pagination -->
       <Pagination
+        v-if="courseObject"
         :totalPages="total"
         :current-page="currentPage"
         @page-changed="handlePageChange"
@@ -92,8 +97,8 @@ const handlePrioritySave = async (priority) => {
 
 <style scoped>
 .priority-page {
-  min-height: 100vh;
-  background-color: #f5f5f5;
+  min-height: calc(100vh - 72px);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 2rem;
 }
 
@@ -105,19 +110,29 @@ const handlePrioritySave = async (priority) => {
   gap: 2rem;
 }
 
+.error-message {
+  text-align: center;
+  color: #ef4444;
+  font-size: 1.2rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-message svg {
+  width: 48px;
+  height: 48px;
+  color: #ef4444;
+}
+
 @media (max-width: 600px) {
   .priority-page {
     padding: 1rem;
   }
-}
-
-.error-message {
-  text-align: center;
-  color: #dc3545;
-  font-size: 1.2rem;
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style> 

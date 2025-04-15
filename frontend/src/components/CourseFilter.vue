@@ -1,12 +1,25 @@
 <template>
   <div class="filter-container">
     <button class="filter-btn" @click="toggleFilter">
-      <i class="fas fa-filter"></i>
+      <span class="filter-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        </svg>
+      </span>
+      <span class="filter-text">Filter Courses</span>
     </button>
     
     <div v-if="showFilter" class="filter-dropdown">
       <div class="filter-options">
-        <h3>Filter Courses</h3>
+        <div class="filter-header">
+          <h3>Filter Courses</h3>
+          <button class="close-btn" @click="toggleFilter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
         
         <!-- Sort Field Selection -->
         <div class="filter-group">
@@ -22,7 +35,7 @@
         </div>
 
         <!-- Sort Direction -->
-        <div class="filter-group sort-direction">
+        <div class="filter-group">
           <label>Sort Direction:</label>
           <div class="sort-buttons">
             <button 
@@ -30,7 +43,10 @@
               :class="['sort-btn', { active: filters.sortOrder === 'asc' }]"
               @click="setSort('asc')"
             >
-              <i class="fas fa-sort-amount-up"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <polyline points="6 10 12 4 18 10"></polyline>
+              </svg>
               Ascending
             </button>
             <button 
@@ -38,7 +54,10 @@
               :class="['sort-btn', { active: filters.sortOrder === 'desc' }]"
               @click="setSort('desc')"
             >
-              <i class="fas fa-sort-amount-down"></i>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+                <polyline points="18 14 12 20 6 14"></polyline>
+              </svg>
               Descending
             </button>
           </div>
@@ -84,8 +103,8 @@
           <button class="apply-btn" @click="applyFilters">
             Apply Filters
           </button>
-          <button class="clear-filters" @click="clearFilters">
-            Clear Filters
+          <button class="clear-btn" @click="clearFilters">
+            Clear All
           </button>
         </div>
       </div>
@@ -204,129 +223,190 @@ onUnmounted(() => {
 <style scoped>
 .filter-container {
   position: relative;
+  z-index: 100;
 }
 
 .filter-btn {
-  background: #3f51b5;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s ease;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .filter-btn:hover {
-  background: #2c3e9a;
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+}
+
+.filter-icon {
+  display: flex;
+  align-items: center;
+  color: #3b82f6;
+}
+
+.filter-text {
+  font-size: 0.95rem;
 }
 
 .filter-dropdown {
   position: absolute;
   right: 0;
-  top: 100%;
+  top: calc(100% + 8px);
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   padding: 1.5rem;
   min-width: 320px;
+  max-width: 90vw;
   z-index: 1000;
+  animation: slideIn 0.2s ease-out;
 }
 
-.filter-options {
+.filter-header {
   display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.filter-options h3 {
-  margin: 0 0 0.5rem 0;
-  color: #333;
-  font-size: 1rem;
+.filter-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.close-btn {
+  padding: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #f1f5f9;
+  color: #1a1a1a;
 }
 
 .filter-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .filter-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
+  font-size: 0.9rem;
   font-weight: 500;
+  color: #64748b;
+  margin-bottom: 0.5rem;
 }
 
 .filter-group select,
 .filter-group input {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
 }
 
-.range-inputs {
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: #3b82f6;
+  background: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.sort-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
+}
+
+.sort-btn {
+  flex: 1;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.range-inputs input {
-  width: 45%;
+.sort-btn:hover {
+  background: #f1f5f9;
 }
 
-.range-inputs span {
-  color: #666;
+.sort-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
 }
 
 .filter-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
   margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eee;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.apply-btn,
+.clear-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .apply-btn {
-  flex: 1;
-  padding: 0.75rem;
-  background: #3f51b5;
+  background: #3b82f6;
   color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .apply-btn:hover {
-  background: #2c3e9a;
+  background: #2563eb;
+  transform: translateY(-1px);
 }
 
-.clear-filters {
-  flex: 1;
-  padding: 0.75rem;
-  background: #f5f5f5;
-  border: none;
-  border-radius: 4px;
-  color: #666;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.clear-btn {
+  background: #f1f5f9;
+  color: #64748b;
 }
 
-.clear-filters:hover {
-  background: #e0e0e0;
+.clear-btn:hover {
+  background: #e2e8f0;
+  color: #1a1a1a;
+  transform: translateY(-1px);
 }
 
-/* Animation */
-.filter-dropdown {
-  animation: slideDown 0.2s ease-out;
-}
-
-@keyframes slideDown {
+@keyframes slideIn {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -337,56 +417,31 @@ onUnmounted(() => {
   }
 }
 
-.sort-direction {
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1rem;
-}
+@media (max-width: 768px) {
+  .filter-dropdown {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease-out;
+  }
 
-.sort-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.sort-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
-  color: #666;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.sort-btn i {
-  font-size: 0.9rem;
-}
-
-.sort-btn:hover {
-  background: #f5f5f5;
-  border-color: #ccc;
-}
-
-.sort-btn.active {
-  background: #3f51b5;
-  color: white;
-  border-color: #3f51b5;
-}
-
-/* Make buttons more touch-friendly on mobile */
-@media (max-width: 480px) {
   .sort-buttons {
     flex-direction: column;
   }
-  
-  .sort-btn {
-    padding: 0.75rem;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -45%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
   }
 }
 </style> 

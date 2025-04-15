@@ -1,19 +1,36 @@
 <template>
   <div class="priority-card">
-    <h2>Set Priority for {{ course.course_name }}</h2>
+    <div class="card-header">
+      <h2>Set Priority</h2>
+      <p class="course-name">{{ course.course_name }}</p>
+    </div>
+
     <div class="course-info">
-      <p><strong>Course name:</strong> {{ course.course_name }}</p>
-      <p><strong>Current Priority:</strong> {{ getPriorityLabel(course.priority) }}</p>
+      <div class="info-item">
+        <span class="info-label">Course Name</span>
+        <span class="info-value">{{ course.course_name }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Current Priority</span>
+        <span class="info-value" :class="'priority-' + course.priority">
+          {{ getPriorityLabel(course.priority) }}
+        </span>
+      </div>
     </div>
 
     <div class="priority-selector">
-      <h3>Select New Priority:</h3>
+      <h3>Select New Priority</h3>
       <div class="priority-options">
         <button 
           class="priority-btn low" 
           :class="{ active: selectedPriority === 1 }"
           @click="selectPriority(1)"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20V10"></path>
+            <path d="M18 20V4"></path>
+            <path d="M6 20v-4"></path>
+          </svg>
           Low
         </button>
         <button 
@@ -21,6 +38,11 @@
           :class="{ active: selectedPriority === 2 }"
           @click="selectPriority(2)"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20V6"></path>
+            <path d="M18 20V4"></path>
+            <path d="M6 20v-8"></path>
+          </svg>
           Medium
         </button>
         <button 
@@ -28,6 +50,11 @@
           :class="{ active: selectedPriority === 3 }"
           @click="selectPriority(3)"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20V4"></path>
+            <path d="M18 20V4"></path>
+            <path d="M6 20V4"></path>
+          </svg>
           High
         </button>
       </div>
@@ -35,9 +62,21 @@
 
     <div class="actions">
       <button class="save-btn" @click="savePriority" :disabled="isLoading">
+        <svg v-if="!isLoading" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+        <span class="loading-spinner" v-else></span>
         {{ isLoading ? 'Saving...' : 'Save Priority' }}
       </button>
-      <button class="cancel-btn" @click="cancel">Cancel</button>
+      <button class="cancel-btn" @click="cancel">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        Cancel
+      </button>
     </div>
   </div>
 </template>
@@ -85,58 +124,117 @@ const cancel = () => {
 <style scoped>
 .priority-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   max-width: 600px;
   margin: 0 auto;
 }
 
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.card-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.course-name {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin: 0.5rem 0 0 0;
+}
+
 .course-info {
   margin: 1.5rem 0;
-  padding: 1rem;
-  background: #f5f5f5;
-  border-radius: 4px;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.info-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.info-value {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.info-value.priority-1 { color: #22c55e; }
+.info-value.priority-2 { color: #eab308; }
+.info-value.priority-3 { color: #ef4444; }
 
 .priority-selector {
   margin: 2rem 0;
+}
+
+.priority-selector h3 {
+  font-size: 1.25rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .priority-options {
   display: flex;
   gap: 1rem;
   justify-content: center;
-  margin-top: 1rem;
 }
 
 .priority-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   transition: all 0.3s ease;
+  color: white;
+}
+
+.priority-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.priority-btn:hover svg {
+  transform: translateY(-2px);
 }
 
 .priority-btn.low {
-  background: #4CAF50;
-  color: white;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
 }
 
 .priority-btn.medium {
-  background: #FFC107;
-  color: black;
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
 }
 
 .priority-btn.high {
-  background: #F44336;
-  color: white;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .priority-btn.active {
   transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .actions {
@@ -147,21 +245,25 @@ const cancel = () => {
 }
 
 .save-btn, .cancel-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .save-btn {
-  background: #3f51b5;
+  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
   color: white;
 }
 
 .save-btn:hover:not(:disabled) {
-  background: #2c3e9a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .save-btn:disabled {
@@ -170,18 +272,36 @@ const cancel = () => {
 }
 
 .cancel-btn {
-  background: #9e9e9e;
-  color: white;
+  background: #f1f5f9;
+  color: #64748b;
 }
 
 .cancel-btn:hover {
-  background: #757575;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 600px) {
   .priority-card {
     margin: 1rem;
-    padding: 1rem;
+    padding: 1.5rem;
+  }
+
+  .card-header h2 {
+    font-size: 1.75rem;
   }
 
   .priority-options {
@@ -190,6 +310,16 @@ const cancel = () => {
 
   .priority-btn {
     width: 100%;
+    justify-content: center;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .save-btn, .cancel-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style> 
