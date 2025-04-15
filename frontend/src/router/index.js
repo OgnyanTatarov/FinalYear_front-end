@@ -45,6 +45,22 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/suggestions',
+    name: 'MLSuggestions',
+    component: () => import('@/views/SuggestionsView.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/revision/:topic',
+    name: 'Revision',
+    component: () => import('@/views/RevisionView.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
 ];
 
 const router = createRouter({
