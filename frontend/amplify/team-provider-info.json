@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-finalyearfront-dev-4b180-authRole",
+      "UnauthRoleArn": "arn:aws:iam::524291607441:role/amplify-finalyearfront-dev-4b180-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::524291607441:role/amplify-finalyearfront-dev-4b180-authRole",
+      "Region": "eu-north-1",
+      "DeploymentBucketName": "amplify-finalyearfront-dev-4b180-deployment",
+      "UnauthRoleName": "amplify-finalyearfront-dev-4b180-unauthRole",
+      "StackName": "amplify-finalyearfront-dev-4b180",
+      "StackId": "arn:aws:cloudformation:eu-north-1:524291607441:stack/amplify-finalyearfront-dev-4b180/e9ffbab0-1abc-11f0-8497-06385ff4dd7d",
+      "AmplifyAppId": "d3d1vsb4mx4n9c"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3d1vsb4mx4n9c",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
