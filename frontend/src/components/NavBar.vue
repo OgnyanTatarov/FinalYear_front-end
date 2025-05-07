@@ -35,6 +35,14 @@
           </svg>
           Suggestions
         </router-link>
+        <router-link v-if="isAdmin" to="/admin" class="nav-link" :class="{ active: $route.path === '/admin' }">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+          Admin
+        </router-link>
         <router-link to="/settings" class="nav-link" :class="{ active: $route.path === '/settings' }">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -69,6 +77,11 @@ const toast = useToast();
 // Compute whether back button should be shown
 const shouldShowBackButton = computed(() => {
   return route.name !== 'Courses';
+});
+
+// Check if user is admin
+const isAdmin = computed(() => {
+  return store.getters.getUserRole === 'admin';
 });
 
 // Method to navigate back to the previous page

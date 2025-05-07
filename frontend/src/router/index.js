@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import store from '@/store';
 
 
 const routes = [
@@ -61,11 +62,44 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('@/views/AdminDashboard.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
+  {
+    path: '/admin/courses/:courseId',
+    name: 'AdminCourseDetails',
+    component: () => import('@/views/CourseDetails.vue'),
+    props: true,
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true
+    }
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// Navigation guard to check for authentication and admin access
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = store.getters.getUserInfo?.userId;
+  const isAdmin = store.getters.getUserRole === 'admin';
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next('/');
+  } else if (to.meta.requiresAdmin && !isAdmin) {
+    next('/courses');
+  } else {
+    next();
+  }
 });
 
 export default router;

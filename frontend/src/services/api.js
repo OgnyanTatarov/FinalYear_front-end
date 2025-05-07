@@ -135,3 +135,117 @@ export const updateDeadlineProgress = async (deadlineId, userId, progress) => {
     throw error;
   }
 };
+
+// Admin API Endpoints
+export const adminFetchCourses = async (userId) => {
+  try {
+    const response = await API.get('/admin/courses/view', {
+      params: { user_id: userId }
+    });
+    console.log('Courses API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching admin courses:', error);
+    throw error;
+  }
+};
+
+export const adminSearchStudents = async (upNumber) => {
+  try {
+    const response = await API.get('/admin/search-student', {
+      params: { up_number: upNumber }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching students:', error);
+    throw error;
+  }
+};
+
+export const adminFetchDeadlines = async () => {
+  try {
+    const response = await API.get('/admin/deadlines');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching admin deadlines:', error);
+    throw error;
+  }
+};
+
+export const adminCreateCourse = async (courseName, courseCode, faculty, adminId) => {
+  try {
+    const response = await API.post('/admin/courses/add', {
+      course_name: courseName,
+      course_code: courseCode,
+      faculty: faculty,
+      admin_id: adminId
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating course:', error);
+    throw error;
+  }
+};
+
+export const adminEditCourse = async (query, body) => {
+  try {
+    const response = await API.put(`/admin/courses/${query}`, body);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating course:', error);
+    throw error;
+  }
+};
+
+export const adminDeleteCourse = async (courseId) => {
+  try {
+    const response = await API.delete(`/admin/courses/${courseId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting course:', error);
+    throw error;
+  }
+};
+
+export const adminCreateDeadline = async (deadlineData) => {
+  try {
+    const response = await API.post('/admin/deadlines', deadlineData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating deadline:', error);
+    throw error;
+  }
+};
+
+export const adminEditDeadline = async (deadlineId, deadlineData) => {
+  try {
+    const response = await API.put(`/admin/deadlines/${deadlineId}`, deadlineData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating deadline:', error);
+    throw error;
+  }
+};
+
+export const adminDeleteDeadline = async (deadlineId) => {
+  try {
+    const response = await API.delete(`/admin/deadlines/${deadlineId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting deadline:', error);
+    throw error;
+  }
+};
+
+export const adminFetchAllStudents = async (userId) => {
+  try {
+    const response = await API.get('/admin/students/view', {
+      params: { user_id: userId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching all students:', error);
+    throw error;
+  }
+};
